@@ -37,12 +37,12 @@ function createHaxeFunction(field, allTypes) {
   let functionSignature = name;
 
   if (params) {
-    const paramStrings = params.map(
-      (param) =>
-        `${param.name}: ${
-          determineType(allTypes, param.type, param.name) || "Dynamic"
-        }`
-    );
+    const paramStrings = [];
+    for (const param of params) {
+      const type = determineType(allTypes, param.type, param.name) || "Dynamic";
+      const optionalString = param.optional ? "?" : "";
+      paramStrings.push(`${optionalString}${param.name}: ${type}`);
+    }
     functionSignature += "(" + paramStrings.join(", ") + ")";
   } else {
     functionSignature += "()";
