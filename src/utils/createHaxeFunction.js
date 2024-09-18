@@ -1,3 +1,4 @@
+const { commonBoolTypes } = require("./commonBoolTypes");
 const { commonIntTypes } = require("./commonIntTypes");
 const { commonStringTypes } = require("./commonStringTypes");
 
@@ -21,6 +22,10 @@ function determineType(allTypes = [], type, name) {
 
       if (name && commonStringTypes.includes(name)) {
         return "String";
+      }
+
+      if (name && commonBoolTypes.includes(name)) {
+        return "Bool";
       }
 
       if (name && name === "function") {
