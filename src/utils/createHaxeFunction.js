@@ -56,7 +56,7 @@ function createHaxeFunction(field, allTypes) {
     functionSignature += ": Void";
   }
 
-  const functionDefinition = `public static function ${functionSignature}`;
+  const functionDefinition = `public static function ${functionSignature};`;
 
   return functionDefinition;
 }
