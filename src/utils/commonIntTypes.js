@@ -22,6 +22,19 @@ const commonIntTypes = [
   'wsize',
   'hsize',
   'xsize',
+  'rotation',
+  'scale',
+  'xscale',
+  'yscale',
+  'xscale2',
+  'yscale2',
+  'wscale',
+  'hscale',
+  'wscale2',
+  'hscale2',
+  'wpos2',
+  'hpos2',
+  'xpos2',
 ];
 
 exports.commonIntTypes = commonIntTypes;
