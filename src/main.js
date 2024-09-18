@@ -10,7 +10,7 @@ const input = fs.readFileSync("reascripthelp.html", "utf8");
 const ast = parser(input);
 const categorized = categorizeAst(ast);
 
-const { reaper, gfx, other } = categorized;
+const { reaper, gfx, other, imgui } = categorized;
 
 
 const types = getTypes(categorized)
@@ -31,7 +31,16 @@ traverseFields(gfx, (field) => {
   gfxFunctions.push(createHaxeFunction(field, types));
 });
 
+const imguiFunctions = [];
+traverseFields(imgui, (field) => {
+  imguiFunctions.push(createHaxeFunction(field, types));
+});
 
+
+const reaperClass = '@:native("reaper")\n' + 'extern class Reaper {\n' + reaperFunctions.join('\n') + '\n}';
+const graphicsClass = '@:native("gfx")\n' + 'extern class Graphics {\n' + gfxFunctions.join('\n') + '\n}';
+const imguiClass = '@:native("reaper")\n' + 'extern class ImGui {\n' + imguiFunctions.join('\n') + '\n}';
 // write to file
-fs.writeFileSync('dist/Reaper.hx', reaperFunctions.join('\n'));
-fs.writeFileSync('dist/Graphics.hx', gfxFunctions.join('\n'));
+fs.writeFileSync('dist/Reaper.hx', reaperClass);
+fs.writeFileSync('dist/Graphics.hx', graphicsClass);
+fs.writeFileSync('dist/ImGui.hx', imguiClass);
