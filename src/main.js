@@ -37,6 +37,13 @@ traverseFields(imgui, (field) => {
 });
 
 
+const reaperTypes = [];
+
+for (let [key, value] of types) {
+  reaperTypes.push(`extern class ${value} {};`);
+}
+
+
 const reaperClass = '@:native("reaper")\n' + 'extern class Reaper {\n' + reaperFunctions.join('\n') + '\n}';
 const graphicsClass = '@:native("gfx")\n' + 'extern class Graphics {\n' + gfxFunctions.join('\n') + '\n}';
 const imguiClass = '@:native("reaper")\n' + 'extern class ImGui {\n' + imguiFunctions.join('\n') + '\n}';
@@ -44,3 +51,4 @@ const imguiClass = '@:native("reaper")\n' + 'extern class ImGui {\n' + imguiFunc
 fs.writeFileSync('dist/Reaper.hx', reaperClass);
 fs.writeFileSync('dist/Graphics.hx', graphicsClass);
 fs.writeFileSync('dist/ImGui.hx', imguiClass);
+fs.writeFileSync('dist/Types.hx', reaperTypes.join('\n'));
