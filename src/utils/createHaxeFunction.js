@@ -36,10 +36,6 @@ function createHaxeFunction(field, allTypes) {
 
   let functionSignature = name;
 
-  if (name === 'GetCursorContext') {
-    console.log('here')
-  }
-
   if (params) {
     const paramStrings = params.map(
       (param) =>
