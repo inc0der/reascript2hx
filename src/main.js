@@ -39,6 +39,10 @@ traverseFields(imgui, (field) => {
 const reaperTypes = [];
 
 for (let [key, value] of types) {
+  if (key === 'reaper_array') {
+    // we skip reaper_array because reaper.array already exists as a type
+    continue
+  }
   reaperTypes.push(`extern class ${value} {}`);
 }
 
