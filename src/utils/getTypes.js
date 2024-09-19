@@ -1,6 +1,6 @@
-const { traverseFields } = require('./traverseFields');
+import { traverseFields } from './traverseFields.js';
 
-function getTypes (ast) {
+export function getTypes (ast) {
   const { reaper, gfx, imgui, other } = ast;
 
   let types = new Map();
@@ -49,6 +49,3 @@ function getTypes (ast) {
 
   return types
 }
-
-
-exports.getTypes = getTypes

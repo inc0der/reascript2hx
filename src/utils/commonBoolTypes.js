@@ -1,4 +1,4 @@
-const commonBoolTypes = [
+export const commonBoolTypes = [
   "active",
   "visible",
   "enabled",
@@ -10,5 +10,3 @@ const commonBoolTypes = [
   "mouse_clicked",
   "mouse_double_clicked",
 ];
-
-exports.commonBoolTypes = commonBoolTypes;

@@ -1,4 +1,4 @@
-const commonIntTypes = [
+export const commonIntTypes = [
   "x",
   "y",
   "r",
@@ -36,5 +36,3 @@ const commonIntTypes = [
   'hpos2',
   'xpos2',
 ];
-
-exports.commonIntTypes = commonIntTypes;

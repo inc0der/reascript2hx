@@ -1,10 +1,9 @@
-const { parser } = require('reascriptluaparser')
-
-const fs = require("fs");
-const { createHaxeFunction } = require('./utils/createHaxeFunction');
-const { traverseFields } = require('./utils/traverseFields');
-const { categorizeAst } = require('./utils/categorizeAst');
-const { getTypes } = require('./utils/getTypes');
+import fs from 'fs';
+import { parser } from 'reascriptluaparser';
+import { traverseFields } from './utils/traverseFields.js';
+import { categorizeAst } from './utils/categorizeAst.js';
+import { getTypes } from './utils/getTypes.js';
+import { createHaxeFunction } from './utils/createHaxeFunction.js';
 
 const input = fs.readFileSync("reascripthelp.html", "utf8");
 const ast = parser(input);

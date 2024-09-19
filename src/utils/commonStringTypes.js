@@ -1,4 +1,4 @@
-const commonStringTypes = [
+export const commonStringTypes = [
   "str",
   "name",
   "desc",
@@ -9,4 +9,3 @@ const commonStringTypes = [
   "filetitle",
 ];
 
-exports.commonStringTypes = commonStringTypes;

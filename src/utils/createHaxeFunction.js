@@ -1,8 +1,8 @@
-const { commonBoolTypes } = require("./commonBoolTypes");
-const { commonIntTypes } = require("./commonIntTypes");
-const { commonStringTypes } = require("./commonStringTypes");
+import { commonBoolTypes } from "./commonBoolTypes.js";
+import { commonIntTypes } from "./commonIntTypes.js";
+import { commonStringTypes } from "./commonStringTypes.js";
 
-function determineType(allTypes = [], type, name) {
+function determineType (allTypes = [], type, name) {
   switch (type) {
     case "integer":
       return "Int";
@@ -36,7 +36,7 @@ function determineType(allTypes = [], type, name) {
   }
 }
 
-function createHaxeFunction(field, allTypes) {
+export function createHaxeFunction (field, allTypes) {
   const { description, name, namespace, params, returns } = field;
 
   let functionSignature = name;
@@ -65,5 +65,3 @@ function createHaxeFunction(field, allTypes) {
 
   return functionDefinition;
 }
-
-exports.createHaxeFunction = createHaxeFunction;

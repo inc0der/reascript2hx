@@ -1,4 +1,4 @@
-function categorizeAst (ast) {
+export function categorizeAst (ast) {
   const length = ast.length;
   const categorizedAst = {
     reaper: [],
@@ -31,4 +31,3 @@ function categorizeAst (ast) {
 
   return categorizedAst;
 }
-exports.categorizeAst = categorizeAst;

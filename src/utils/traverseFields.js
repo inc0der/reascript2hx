@@ -1,4 +1,4 @@
-function traverseFields (ast, callback) {
+export function traverseFields (ast, callback) {
   const length = ast.length;
 
   for (let i = length - 1; i >= 0; i--) {
@@ -6,4 +6,3 @@ function traverseFields (ast, callback) {
     callback(field);
   }
 }
-exports.traverseFields = traverseFields;
