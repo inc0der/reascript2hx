@@ -1,6 +1,7 @@
 import { commonBoolTypes } from "./commonBoolTypes.js";
 import { commonIntTypes } from "./commonIntTypes.js";
 import { commonStringTypes } from "./commonStringTypes.js";
+import { formatAsMultilineComment } from "./formatAsMultilineComment.js";
 import camelcase from "camelcase";
 
 function determineType (allTypes = [], type, name) {
@@ -62,7 +63,8 @@ export function createHaxeFunction (field, allTypes) {
     functionSignature += ": Void";
   }
 
-  const functionDefinition = `@:native(${name})\npublic static function ${functionSignature};`;
+  const comment = formatAsMultilineComment(description)
+  const functionDefinition = `${comment}\n@:native(${name})\npublic static function ${functionSignature};`;
 
   return functionDefinition;
 }
