@@ -39,7 +39,7 @@ traverseFields(imgui, (field) => {
 const reaperTypes = [];
 
 for (let [key, value] of types) {
-  reaperTypes.push(`extern class ${value} {};`);
+  reaperTypes.push(`extern class ${value} {}`);
 }
 
 
