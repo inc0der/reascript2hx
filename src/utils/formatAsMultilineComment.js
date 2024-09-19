@@ -19,7 +19,7 @@ export function formatAsMultilineComment (text, maxLineLength = 80) {
   }
 
   if (!text) {
-    return text
+    return '/** No description available */';
   }
 
   const wrappedLines = wrapText(text, maxLineLength - 3); // -3 for " * "
