@@ -1,5 +1,7 @@
 import { traverseFields } from './traverseFields.js';
 
+import camelcase from 'camelcase';
+
 export function getTypes (ast) {
   const { reaper, gfx, imgui, other } = ast;
 
@@ -41,9 +43,7 @@ export function getTypes (ast) {
   });
 
   for (const [key, value] of types) {
-    const capitalizedFirstLetter = key[0].toUpperCase();
-    let sanitizedValue = capitalizedFirstLetter + key.slice(1).replace(/\s+/g, '');
-    types.set(key, sanitizedValue);
+    types.set(key, camelcase(value, { pascalCase: true }));
   }
 
 

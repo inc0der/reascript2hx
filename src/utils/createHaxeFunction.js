@@ -1,6 +1,7 @@
 import { commonBoolTypes } from "./commonBoolTypes.js";
 import { commonIntTypes } from "./commonIntTypes.js";
 import { commonStringTypes } from "./commonStringTypes.js";
+import camelcase from "camelcase";
 
 function determineType (allTypes = [], type, name) {
   switch (type) {
@@ -39,7 +40,7 @@ function determineType (allTypes = [], type, name) {
 export function createHaxeFunction (field, allTypes) {
   const { description, name, namespace, params, returns } = field;
 
-  let functionSignature = name;
+  let functionSignature = camelcase(name);
 
   if (params) {
     const paramStrings = [];
@@ -61,7 +62,7 @@ export function createHaxeFunction (field, allTypes) {
     functionSignature += ": Void";
   }
 
-  const functionDefinition = `public static function ${functionSignature};`;
+  const functionDefinition = `@:native(${name})\npublic static function ${functionSignature};`;
 
   return functionDefinition;
 }
