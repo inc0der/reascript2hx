@@ -3,6 +3,7 @@ import { commonIntTypes } from "./commonIntTypes.js";
 import { commonStringTypes } from "./commonStringTypes.js";
 import { formatAsMultilineComment } from "./formatAsMultilineComment.js";
 import camelcase from "camelcase";
+import { enhancedCamelCase } from "./enhancedCamelCase.js";
 
 function determineType (allTypes = [], type, name) {
   switch (type) {
@@ -48,7 +49,7 @@ export function createHaxeFunction (field, allTypes) {
     for (const param of params) {
       const type = determineType(allTypes, param.type, param.name) || "Dynamic";
       const optionalString = param.optional ? "?" : "";
-      paramStrings.push(`${optionalString}${param.name}: ${type}`);
+      paramStrings.push(`${optionalString}${enhancedCamelCase(param.name)}: ${type}`);
     }
     functionSignature += "(" + paramStrings.join(", ") + ")";
   } else {
