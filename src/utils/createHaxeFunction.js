@@ -65,7 +65,7 @@ export function createHaxeFunction (field, allTypes) {
   }
 
   const comment = formatAsMultilineComment(description)
-  const functionDefinition = `${comment}\n@:native(${name})\npublic static function ${functionSignature};`;
+  const functionDefinition = `${comment}\n@:native("${name}")\npublic static function ${functionSignature};`;
 
   return functionDefinition;
 }
