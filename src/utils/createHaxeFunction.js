@@ -14,7 +14,7 @@ function determineType(allTypes = [], type, name) {
       return "String";
     default:
       if (allTypes.has(type)) {
-        return type;
+        return allTypes.get(type);
       }
       if (name && commonIntTypes.includes(name)) {
         return "Float";

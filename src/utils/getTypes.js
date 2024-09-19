@@ -1,9 +1,9 @@
 const { traverseFields } = require('./traverseFields');
 
-function getTypes(ast) {
+function getTypes (ast) {
   const { reaper, gfx, imgui, other } = ast;
 
-  const types = new Map();
+  let types = new Map();
 
   const commonTypesToExclude = ['integer', 'number', 'string', 'boolean'];
 
@@ -11,14 +11,14 @@ function getTypes(ast) {
 
     if (field.params) {
       for (const param of field.params) {
-         if (!param.type || commonTypesToExclude.includes(param.type)) continue
+        if (!param.type || commonTypesToExclude.includes(param.type)) continue
         types.set(param.type, param.type)
       }
     }
 
     if (field.returns) {
       for (const ret of field.returns) {
-         if (!ret.type || commonTypesToExclude.includes(ret.type)) continue
+        if (!ret.type || commonTypesToExclude.includes(ret.type)) continue
         types.set(ret.type, ret.type)
       }
     }
@@ -39,6 +39,13 @@ function getTypes(ast) {
       }
     }
   });
+
+  for (const [key, value] of types) {
+    const capitalizedFirstLetter = key[0].toUpperCase();
+    let sanitizedValue = capitalizedFirstLetter + key.slice(1).replace(/\s+/g, '');
+    types.set(key, sanitizedValue);
+  }
+
 
   return types
 }
