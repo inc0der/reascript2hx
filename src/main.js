@@ -47,10 +47,16 @@ for (let [key, value] of types) {
 }
 
 
-const reaperClass = 'package;\n\n @:native("reaper")\n' + 'extern class Reaper {\n' + reaperFunctions.join('\n') + '\n}';
-const graphicsClass = 'package;\n\n @:native("gfx")\n' + 'extern class Graphics {\n' + gfxFunctions.join('\n') + '\n}';
-const imguiClass = 'package;\n\n @:native("reaper")\n' + 'extern class ImGui {\n' + imguiFunctions.join('\n') + '\n}';
-const typesClass = reaperTypes.join('\n');
+function createExternClass(nativeName, className, functions) {
+  return `package reaper;\n\nimport Types;\n\n@:${nativeName}("${className}")\nextern class ${className} {\n${functions.join('\n')}\n}`;
+}
+
+
+
+const reaperClass = createExternClass('reaper', 'Reaper', reaperFunctions);
+const graphicsClass = createExternClass('gfx', 'Graphics', gfxFunctions);
+const imguiClass = createExternClass('reaper', 'ImGui', imguiFunctions);
+const typesClass = 'package reaper;\n\n' + reaperTypes.join('\n') + '\n';
 
 // write to file
 fs.writeFileSync('dist/Reaper.hx', reaperClass);
