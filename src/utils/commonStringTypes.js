@@ -7,5 +7,7 @@ export const commonStringTypes = [
   "filepath",
   "fileext",
   "filetitle",
+  'cHar',
+  'unicHar',
 ];
 

@@ -9,4 +9,5 @@ export const commonBoolTypes = [
   "mouse_down",
   "mouse_clicked",
   "mouse_double_clicked",
+  antialias,
 ];
