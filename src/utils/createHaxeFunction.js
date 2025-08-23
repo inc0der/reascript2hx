@@ -4,6 +4,7 @@ import { commonStringTypes } from "./commonStringTypes.js";
 import { formatAsMultilineComment } from "./formatAsMultilineComment.js";
 import camelcase from "camelcase";
 import { enhancedCamelCase } from "./enhancedCamelCase.js";
+import { haxeReservedKeywords } from "./haxeReserved.js";
 
 function determineType (allTypes = [], type, name) {
   switch (type) {
@@ -49,7 +50,12 @@ export function createHaxeFunction (field, allTypes) {
     for (const param of params) {
       const type = determineType(allTypes, param.type, param.name) || "Dynamic";
       const optionalString = param.optional ? "?" : "";
-      paramStrings.push(`${optionalString}${enhancedCamelCase(param.name)}: ${type}`);
+
+      if (haxeReservedKeywords[param.name]) {
+        paramStrings.push(`${optionalString}${haxeReservedKeywords[param.name]}: ${type}`);
+      } else {
+        paramStrings.push(`${optionalString}${enhancedCamelCase(param.name)}: ${type}`);
+      }
     }
     functionSignature += "(" + paramStrings.join(", ") + ")";
   } else {
