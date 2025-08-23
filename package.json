@@ -12,7 +12,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "camelcase": "^8.0.0",
-    "reascriptluaparser": "^2.0.2"
+    "camelcase": "^8.0.0"
   }
 }
