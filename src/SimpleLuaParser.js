@@ -31,7 +31,6 @@ export class SimpleLuaParser {
       const line = rawLine.trim();
       const lineNo = idx + 1;
 
-      // Handle @class
       if (CLASS_REGEX.test(line)) {
         const [, name] = line.match(CLASS_REGEX);
         currentClass = name;
@@ -42,7 +41,6 @@ export class SimpleLuaParser {
         return;
       }
 
-      // Handle @field
       if (FIELD_REGEX.test(line) && currentClass) {
         const [, name, type, desc] = line.match(FIELD_REGEX);
         result[currentClass].push({
@@ -55,7 +53,6 @@ export class SimpleLuaParser {
         return;
       }
 
-      // Handle @param
       if (PARAM_REGEX.test(line)) {
         const match = line.match(PARAM_REGEX);
         if (match) {
@@ -85,7 +82,6 @@ export class SimpleLuaParser {
         }
       }
 
-      // Handle @return
       if (RETURN_REGEX.test(line)) {
         const [, type, name, desc] = line.match(RETURN_REGEX);
         state.returns.push({
@@ -96,17 +92,14 @@ export class SimpleLuaParser {
         return;
       }
 
-      // Handle description
       if (DESC_REGEX.test(line)) {
         state.description = line.match(DESC_REGEX)[1].trim();
         return;
       }
 
-      // Handle functions
       if (FUNC_REGEX.test(line)) {
         const [, fullName, rawParams] = line.match(FUNC_REGEX);
 
-        // Split into class + method
         const [className, ...rest] = fullName.split(".");
         const funcName = rest.join(".") || fullName;
 
@@ -129,7 +122,6 @@ export class SimpleLuaParser {
         return;
       }
 
-      // Reset state on unrelated lines
       if (!line.startsWith("---") && line !== "") {
         state.reset();
       }
