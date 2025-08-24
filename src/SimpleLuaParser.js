@@ -77,6 +77,7 @@ export class SimpleLuaParser {
           state.params.push({ 
             name, 
             type, 
+            isVarargs: name === '...',
             optional: isOptional,
             description 
           });

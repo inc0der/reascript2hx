@@ -67,12 +67,14 @@ export function createHaxeFunction (field, allTypes) {
   if (params) {
     const paramStrings = [];
     for (const param of params) {
-      const { type, optional } = param;
+      const { type, optional, isVarargs } = param;
       const haxeType = determineType(allTypes, param.type, param.name) || "Dynamic";
       const optionalString = param.optional ? "?" : "";
 
       if (haxeReservedKeywords[param.name]) {
         paramStrings.push(`${optionalString}${haxeReservedKeywords[param.name]}: ${haxeType}`);
+      } else if (isVarargs) {
+        paramStrings.push(`...args:Array<${haxeType}>`);
       } else {
         paramStrings.push(`${optionalString}${enhancedCamelCase(param.name)}: ${haxeType}`);
       }
