@@ -4,6 +4,7 @@ import { SimpleLuaParser } from './SimpleLuaParser.js';
 import { getTypes } from './utils/getTypes.js';
 import { traverseFields } from './utils/traverseFields.js';
 import { createHaxeFunction } from './utils/createHaxeFunction.js';
+import { createHaxeVariable } from './utils/createHaxeVariable.js';
 
 
 const gfxFunctions = [];
@@ -17,23 +18,22 @@ const imguiTree = parser.parseFile("resources/imgui_defs_0.9.lua", "utf8");
 const types = getTypes(reaperTree);
 
 traverseFields(reaperTree.gfx, (field) => {
-  if (field.type === 'function') {
+  if (field.fieldType === 'function') {
     gfxFunctions.push(createHaxeFunction(field, types));
-  } else if (field.type === 'variable') {
-    // We need to create the haxe variable definition
-    // gfxVariables.push(createHaxeVariable(field, types));
+  } else if (field.fieldType === 'variable') {
+    gfxFunctions.push(createHaxeVariable(field, types));
   }
 });
 
 traverseFields(reaperTree.reaper, (field) => {
-  if (field.type === 'function') {
+  if (field.fieldType === 'function') {
     if (field.name === 'GetMediaItem_Track') {
       // GetMediaItem_Track is the same as GetMediaItemTrack so we skip it
       // This is a workaround for duplicate externs since we convert to snakeCase.
       return;
     }
     reaperFunctions.push(createHaxeFunction(field, types));
-  } else if (field.type === 'variable') {
+  } else if (field.fieldType === 'variable') {
     // We need to create the haxe variable definition
     // reaperVariables.push(createHaxeVariable(field, types));
   }
@@ -41,9 +41,9 @@ traverseFields(reaperTree.reaper, (field) => {
 
 
 traverseFields(imguiTree.ImGui, (field) => {
-  if (field.type === 'function') {
+  if (field.fieldType === 'function') {
     imguiFunctions.push(createHaxeFunction(field, types));
-  } else if (field.type === 'variable') {
+  } else if (field.fieldType === 'variable') {
     // We need to create the haxe variable definition
     // imguiVariables.push(createHaxeVariable(field, types));
   }

@@ -47,7 +47,7 @@ export class SimpleLuaParser {
         const [, name, type, desc] = line.match(FIELD_REGEX);
         result[currentClass].push({
           name,
-          type: "variable",
+          fieldType: "variable",
           type: type,
           description: desc || null,
           line: lineNo
@@ -115,7 +115,7 @@ export class SimpleLuaParser {
         }
 
         result[className].push({
-          type: "function",
+          fieldType: "function",
           name: funcName,
           params: [...state.params],
           returns: [...state.returns],
