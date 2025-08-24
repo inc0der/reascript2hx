@@ -1,17 +1,17 @@
 {
-  "name": "lua2hx",
+  "name": "reascript2hx",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "ReaScript2Hx is a tool for converting Reaper's ReaScript Lua documentation to Haxe.",
+  "main": "./src/main.js",
   "type": "module",
   "scripts": {
     "build": "node ./src/main.js",
     "updateLuaDocs": "node ./src/updateLuaDocs.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["Reaper", "Reascript", "Haxe", "Lua", "Script", "ReaScript2Hx"],
+  "author": "inc0der",
+  "license": "MIT",
   "dependencies": {
     "camelcase": "^8.0.0"
   }
