@@ -37,7 +37,7 @@ export class SimpleLuaParser {
         currentClass = name;
 
         if (!result[currentClass]) {
-          result[currentClass] = { fields: {} };
+          result[currentClass] = [];
         }
         return;
       }
@@ -45,12 +45,13 @@ export class SimpleLuaParser {
       // Handle @field
       if (FIELD_REGEX.test(line) && currentClass) {
         const [, name, type, desc] = line.match(FIELD_REGEX);
-        result[currentClass].fields[name] = {
+        result[currentClass].push({
+          name,
           type: "variable",
           type: type,
           description: desc || null,
           line: lineNo
-        };
+        });
         return;
       }
 
@@ -87,17 +88,18 @@ export class SimpleLuaParser {
         const funcName = rest.join(".") || fullName;
 
         if (!result[className]) {
-          result[className] = { fields: {} };
+          result[className] = [];
         }
 
-        result[className].fields[funcName] = {
+        result[className].push({
           type: "function",
+          name: funcName,
           params: [...state.params],
           returns: [...state.returns],
           description: state.description,
           rawParams: rawParams.trim(),
           line: lineNo
-        };
+        });
 
         state.reset();
         currentClass = null;
