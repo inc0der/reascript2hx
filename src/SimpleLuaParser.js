@@ -1,6 +1,7 @@
 import fs from "fs";
 
 const CLASS_REGEX = /---@class\s+(?:\([^)]+\))?\s*(\w+)(?:\s*:\s*(\w+))?/;
+const FIELD_REGEX = /---@field\s+(\w+)\s+([^\s]+)(?:\s+(.+))?/;
 const PARAM_REGEX = /---@param\s+(\w+)\s+([^\s]+)(?:\s+(.+))?/;
 const RETURN_REGEX = /---@return\s+([^\s]+)(?:\s+(\w+))?(?:\s+(.+))?/;
 const DESC_REGEX = /^---([^@].*)$/;
@@ -10,7 +11,7 @@ class ParserState {
   constructor() { this.reset(); }
   reset() {
     this.params = [];
-    this.returns = null;
+    this.returns = [];
     this.description = null;
   }
 }
@@ -23,51 +24,90 @@ export class SimpleLuaParser {
   parse(content) {
     const lines = content.split("\n");
     const state = new ParserState();
-    const result = { classes: new Map(), functions: [] };
+    const result = { };
+    let currentClass = null;
 
-    lines.forEach((lineRaw, idx) => {
-      const line = lineRaw.trim();
+    lines.forEach((rawLine, idx) => {
+      const line = rawLine.trim();
       const lineNo = idx + 1;
 
+      // Handle @class
       if (CLASS_REGEX.test(line)) {
-        const [, name, parent] = line.match(CLASS_REGEX);
-        result.classes.set(name, { name, parent: parent || null, line: lineNo });
+        const [, name] = line.match(CLASS_REGEX);
+        currentClass = name;
+
+        if (!result[currentClass]) {
+          result[currentClass] = { fields: {} };
+        }
         return;
       }
 
+      // Handle @field
+      if (FIELD_REGEX.test(line) && currentClass) {
+        const [, name, type, desc] = line.match(FIELD_REGEX);
+        result[currentClass].fields[name] = {
+          type: "variable",
+          type: type,
+          description: desc || null,
+          line: lineNo
+        };
+        return;
+      }
+
+      // Handle @param
       if (PARAM_REGEX.test(line)) {
         const [, name, type, desc] = line.match(PARAM_REGEX);
         state.params.push({ name, type, description: desc || null });
         return;
       }
 
+      // Handle @return
       if (RETURN_REGEX.test(line)) {
         const [, type, name, desc] = line.match(RETURN_REGEX);
-        state.returns = { type, name: name || null, description: desc || null };
+        state.returns.push({
+          type,
+          name: name || null,
+          description: desc || null
+        });
         return;
       }
 
+      // Handle description
       if (DESC_REGEX.test(line)) {
         state.description = line.match(DESC_REGEX)[1].trim();
         return;
       }
 
+      // Handle functions
       if (FUNC_REGEX.test(line)) {
-        const [, name, rawParams] = line.match(FUNC_REGEX);
-        result.functions.push({
-          name,
-          rawParams: rawParams.trim(),
+        const [, fullName, rawParams] = line.match(FUNC_REGEX);
+
+        // Split into class + method
+        const [className, ...rest] = fullName.split(".");
+        const funcName = rest.join(".") || fullName;
+
+        if (!result[className]) {
+          result[className] = { fields: {} };
+        }
+
+        result[className].fields[funcName] = {
+          type: "function",
           params: [...state.params],
-          returns: state.returns,
+          returns: [...state.returns],
           description: state.description,
-          line: lineNo,
-        });
+          rawParams: rawParams.trim(),
+          line: lineNo
+        };
+
         state.reset();
+        currentClass = null;
         return;
       }
 
-      // reset annotations if it's a non-comment, non-function line
-      if (!line.startsWith("---") && line !== "") state.reset();
+      // Reset state on unrelated lines
+      if (!line.startsWith("---") && line !== "") {
+        state.reset();
+      }
     });
 
     return result;
