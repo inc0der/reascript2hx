@@ -27,6 +27,11 @@ traverseFields(reaperTree.gfx, (field) => {
 
 traverseFields(reaperTree.reaper, (field) => {
   if (field.type === 'function') {
+    if (field.name === 'GetMediaItem_Track') {
+      // GetMediaItem_Track is the same as GetMediaItemTrack so we skip it
+      // This is a workaround for duplicate externs since we convert to snakeCase.
+      return;
+    }
     reaperFunctions.push(createHaxeFunction(field, types));
   } else if (field.type === 'variable') {
     // We need to create the haxe variable definition
