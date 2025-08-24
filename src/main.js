@@ -58,15 +58,13 @@ function createExternClass(nativeName, className, functions) {
   return `package reaper;\n\nimport Types;\n\n@:native("${nativeName}")\nextern class ${className} {\n${functions.join('\n')}\n}`;
 }
 
-
-
 const reaperClass = createExternClass('reaper', 'Reaper', reaperFunctions);
 const graphicsClass = createExternClass('gfx', 'Graphics', gfxFunctions);
 const imguiClass = createExternClass('reaper', 'ImGui', imguiFunctions);
-// const typesClass = 'package reaper;\n\n' + reaperTypes.join('\n') + '\n';
+const typesClass = 'package reaper;\n\n' + reaperTypes.join('\n') + '\n';
 
 // // write to file
 fs.writeFileSync('dist/Reaper.hx', reaperClass);
 fs.writeFileSync('dist/Graphics.hx', graphicsClass);
 fs.writeFileSync('dist/ImGui.hx', imguiClass);
-// fs.writeFileSync('dist/Types.hx', typesClass);
+fs.writeFileSync('dist/Types.hx', typesClass);
