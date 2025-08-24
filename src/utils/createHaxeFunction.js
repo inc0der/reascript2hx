@@ -85,10 +85,10 @@ export function createHaxeFunction (field, allTypes) {
   if (returns) {
     if (returns.length > 0) {
       functionSignature += ": " + determineType(allTypes, returns[0].type); // Assuming only one return type
-    }
-  } else {
+    } else {
     functionSignature += ": Void";
   }
+ }
 
   const comment = formatAsMultilineComment(description)
   const functionDefinition = `${comment}\n@:native("${name}")\npublic static function ${functionSignature};`;
