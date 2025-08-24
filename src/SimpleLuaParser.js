@@ -3,7 +3,7 @@ import fs from "fs";
 const CLASS_REGEX = /---@class\s+(?:\([^)]+\))?\s*(\w+)(?:\s*:\s*(\w+))?/;
 const FIELD_REGEX = /---@field\s+(\w+)\s+([^\s]+)(?:\s+(.+))?/;
 const PARAM_REGEX = /---@param\s+(\w+)\s+([^\s]+)(?:\s+(.+))?/;
-const RETURN_REGEX = /---@return\s+([^\s]+)(?:\s+(\w+))?(?:\s+(.+))?/;
+const RETURN_REGEX = /---\s*@return\s+([^\s]+)(?:\s+(.+))?/;
 const DESC_REGEX = /^---([^@].*)$/;
 const FUNC_REGEX = /^function\s+([\w.]+)\s*\(([^)]*)\)/;
 
