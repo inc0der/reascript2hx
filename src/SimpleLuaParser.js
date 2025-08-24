@@ -2,7 +2,7 @@ import fs from "fs";
 
 const CLASS_REGEX = /---@class\s+(?:\([^)]+\))?\s*(\w+)(?:\s*:\s*(\w+))?/;
 const FIELD_REGEX = /---@field\s+(\w+)\s+([^\s]+)(?:\s+(.+))?/;
-const PARAM_REGEX = /---@param\s+(\w+)\s+([^\s]+)(?:\s+(.+))?/;
+const PARAM_REGEX = /---\s*@param\s+(.+)$/;
 const RETURN_REGEX = /---\s*@return\s+([^\s]+)(?:\s+(.+))?/;
 const DESC_REGEX = /^---([^@].*)$/;
 const FUNC_REGEX = /^function\s+([\w.]+)\s*\(([^)]*)\)/;
@@ -57,9 +57,31 @@ export class SimpleLuaParser {
 
       // Handle @param
       if (PARAM_REGEX.test(line)) {
-        const [, name, type, desc] = line.match(PARAM_REGEX);
-        state.params.push({ name, type, description: desc || null });
-        return;
+        const match = line.match(PARAM_REGEX);
+        if (match) {
+          const paramText = match[1].trim();
+          
+          const spaceIndex = paramText.indexOf(' ');
+          if (spaceIndex === -1) return;
+          
+          const namepart = paramText.substring(0, spaceIndex);
+          const typeAndDesc = paramText.substring(spaceIndex + 1);
+          
+          const isOptional = namepart.endsWith('?');
+          const name = isOptional ? namepart.slice(0, -1) : namepart;
+          
+          const typeParts = typeAndDesc.trim().split(/\s+/);
+          const type = typeParts[0];
+          const description = typeParts.slice(1).join(' ') || null;
+          
+          state.params.push({ 
+            name, 
+            type, 
+            optional: isOptional,
+            description 
+          });
+          return;
+        }
       }
 
       // Handle @return
