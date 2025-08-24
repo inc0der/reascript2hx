@@ -41,20 +41,21 @@ function determineType (allTypes = [], type, name) {
 }
 
 export function createHaxeFunction (field, allTypes) {
-  const { description, name, namespace, params, returns } = field;
+  const { description, name, params, returns } = field;
 
   let functionSignature = camelcase(name);
 
   if (params) {
     const paramStrings = [];
     for (const param of params) {
-      const type = determineType(allTypes, param.type, param.name) || "Dynamic";
+      const { type, optional } = param;
+      const haxeType = determineType(allTypes, param.type, param.name) || "Dynamic";
       const optionalString = param.optional ? "?" : "";
 
       if (haxeReservedKeywords[param.name]) {
-        paramStrings.push(`${optionalString}${haxeReservedKeywords[param.name]}: ${type}`);
+        paramStrings.push(`${optionalString}${haxeReservedKeywords[param.name]}: ${haxeType}`);
       } else {
-        paramStrings.push(`${optionalString}${enhancedCamelCase(param.name)}: ${type}`);
+        paramStrings.push(`${optionalString}${enhancedCamelCase(param.name)}: ${haxeType}`);
       }
     }
     functionSignature += "(" + paramStrings.join(", ") + ")";

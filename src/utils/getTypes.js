@@ -3,42 +3,33 @@ import { traverseFields } from './traverseFields.js';
 import camelcase from 'camelcase';
 
 export function getTypes (ast) {
-  const { reaper, gfx, imgui, other } = ast;
+  const allFields = Object.values(ast).reduce((acc, item) => {
+    if (item) {
+      return acc.concat(Object.values(item));
+    }
+    return acc;
+  }, []);
 
   let types = new Map();
 
-  const commonTypesToExclude = ['integer', 'number', 'string', 'boolean'];
+  const commonTypesToExclude = ['function', 'integer', 'number', 'string', 'boolean'];
 
-  traverseFields(reaper, (field) => {
+  traverseFields(allFields, (field) => {
 
-    if (field.params) {
-      for (const param of field.params) {
+    const { params, returns } = field;
+
+    if (params) {
+      for (const param of params) {
         if (!param.type || commonTypesToExclude.includes(param.type)) continue
         types.set(param.type, param.type)
       }
     }
 
-    if (field.returns) {
-      for (const ret of field.returns) {
-        if (!ret.type || commonTypesToExclude.includes(ret.type)) continue
-        types.set(ret.type, ret.type)
+    if (returns) {
+      if (!returns.type || commonTypesToExclude.includes(returns.type)) {
+        return
       }
-    }
-  });
-
-  traverseFields(gfx, (field) => {
-    if (field.params) {
-      for (const param of field.params) {
-        if (!param.type || commonTypesToExclude.includes(param.type)) continue
-        types.set(param.type, param.type)
-      }
-    }
-
-    if (field.returns) {
-      for (const ret of field.returns) {
-        if (!ret.type || commonTypesToExclude.includes(ret.type)) continue
-        types.set(ret.type, ret.type)
-      }
+      types.set(returns.type, returns.type)
     }
   });
 
