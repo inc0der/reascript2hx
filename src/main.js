@@ -34,8 +34,7 @@ traverseFields(reaperTree.reaper, (field) => {
     }
     reaperFunctions.push(createHaxeFunction(field, types));
   } else if (field.fieldType === 'variable') {
-    // We need to create the haxe variable definition
-    // reaperVariables.push(createHaxeVariable(field, types));
+    reaperFunctions.push(createHaxeVariable(field, types));
   }
 });
 
@@ -44,8 +43,7 @@ traverseFields(imguiTree.ImGui, (field) => {
   if (field.fieldType === 'function') {
     imguiFunctions.push(createHaxeFunction(field, types));
   } else if (field.fieldType === 'variable') {
-    // We need to create the haxe variable definition
-    // imguiVariables.push(createHaxeVariable(field, types));
+    imguiFunctions.push(createHaxeVariable(field, types));
   }
 });
 
