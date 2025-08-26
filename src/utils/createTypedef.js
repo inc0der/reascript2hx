@@ -9,7 +9,7 @@ export function createTypedefs (field, allTypes) {
     const type = determineType(allTypes, ret.type);
     const name = ret.name || `value${returns.indexOf(ret)}`;
     const optional = ret.type.includes("?") ? "?" : "";
-    return `  ${optional}${name}:${type};`;
+    return `  ${optional}${name}:${type},`;
   }).join("\n");
 
   const typedef = `typedef ${structName} = {\n${fields}\n}`;
