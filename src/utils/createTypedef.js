@@ -7,7 +7,7 @@ export function createTypedefs (field, allTypes) {
 
   const fields = returns.map(ret => {
     const type = determineType(allTypes, ret.type);
-    const name = ret.name || `value${returns.indexOf(ret)}`;
+    const name = camelcase(ret.name) || `value${returns.indexOf(ret)}`;
     const optional = ret.type.includes("?") ? "?" : "";
     return `  ${optional}${name}:${type},`;
   }).join("\n");
