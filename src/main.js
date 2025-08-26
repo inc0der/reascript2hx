@@ -17,7 +17,7 @@ const typedefs = [];
 const parser = new SimpleLuaParser();
 const reaperTree = parser.parseFile("resources/Sexan_reaper_defs.lua", "utf8");
 const imguiTree = parser.parseFile("resources/imgui_defs_0.9.lua", "utf8");
-const types = getTypes(reaperTree);
+const types = getTypes({ ...reaperTree, ...imguiTree });
 
 traverseFields(reaperTree.gfx, (field) => {
   if (field.fieldType === 'function') {
