@@ -34,7 +34,11 @@ export function getTypes (ast) {
   });
 
   for (const [key, value] of types) {
-    types.set(key, camelcase(value, { pascalCase: true }));
+    let name = key;
+    if (key.includes('|')) {
+      name = key.split('|')[0];
+    }
+    types.set(name, camelcase(name, { pascalCase: true }));
   }
 
 
