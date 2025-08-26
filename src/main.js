@@ -5,12 +5,14 @@ import { getTypes } from './utils/getTypes.js';
 import { traverseFields } from './utils/traverseFields.js';
 import { createHaxeFunction } from './utils/createHaxeFunction.js';
 import { createHaxeVariable } from './utils/createHaxeVariable.js';
+import { createTypedefs } from './utils/createTypedef.js';
 
 
 const gfxFunctions = [];
 const reaperFunctions = [];
 const imguiFunctions = [];
 const reaperTypes = [];
+const typedefs = [];
 
 const parser = new SimpleLuaParser();
 const reaperTree = parser.parseFile("resources/Sexan_reaper_defs.lua", "utf8");
@@ -19,6 +21,9 @@ const types = getTypes(reaperTree);
 
 traverseFields(reaperTree.gfx, (field) => {
   if (field.fieldType === 'function') {
+    if (field.returns.length > 1) {
+      typedefs.push(createTypedefs(field, types));
+    }
     gfxFunctions.push(createHaxeFunction(field, types));
   } else if (field.fieldType === 'variable') {
     gfxFunctions.push(createHaxeVariable(field, types));
@@ -32,6 +37,9 @@ traverseFields(reaperTree.reaper, (field) => {
       // This is a workaround for duplicate externs since we convert to snakeCase.
       return;
     }
+    if (field.returns.length > 1) {
+      typedefs.push(createTypedefs(field, types));
+    }
     reaperFunctions.push(createHaxeFunction(field, types));
   } else if (field.fieldType === 'variable') {
     reaperFunctions.push(createHaxeVariable(field, types));
@@ -41,6 +49,9 @@ traverseFields(reaperTree.reaper, (field) => {
 
 traverseFields(imguiTree.ImGui, (field) => {
   if (field.fieldType === 'function') {
+    if (field.returns.length > 1) {
+      typedefs.push(createTypedefs(field, types));
+    }
     imguiFunctions.push(createHaxeFunction(field, types));
   } else if (field.fieldType === 'variable') {
     imguiFunctions.push(createHaxeVariable(field, types));
@@ -56,6 +67,8 @@ for (let [key, value] of types) {
   reaperTypes.push(`extern class ${value} {}`);
 }
 
+reaperTypes;
+
 
 function createExternClass(nativeName, className, functions) {
   return `package reaper;\n\nimport reaper.Types;\n\n@:native("${nativeName}")\nextern class ${className} {\n${functions.join('\n')}\n}`;
@@ -64,7 +77,7 @@ function createExternClass(nativeName, className, functions) {
 const reaperClass = createExternClass('reaper', 'Reaper', reaperFunctions);
 const graphicsClass = createExternClass('gfx', 'Graphics', gfxFunctions);
 const imguiClass = createExternClass('reaper', 'ImGui', imguiFunctions);
-const typesClass = 'package reaper;\n\n' + reaperTypes.join('\n') + '\n';
+const typesClass = 'package reaper;\n\n' + reaperTypes.concat(typedefs).join('\n') + '\n';
 
 // // write to file
 fs.writeFileSync('dist/Reaper.hx', reaperClass);

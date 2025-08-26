@@ -30,12 +30,16 @@ export function createHaxeFunction (field, allTypes) {
     functionSignature += "()";
   }
 
-  if (returns) {
-    if (returns.length > 0) {
-      functionSignature += ": " + determineType(allTypes, returns[0].type); // Assuming only one return type
-    } else {
+  if (!returns) {
     functionSignature += ": Void";
   }
+
+  if (returns.length === 1) {
+    functionSignature += ": " + determineType(allTypes, returns[0].type);
+ } else if (returns.length > 1) {
+    const pascalName = camelcase(name, { pascalCase: true })
+    const structName = `Result${pascalName}`;
+    functionSignature += `: ${structName}`;
  }
 
   const comment = formatAsMultilineComment(description)
