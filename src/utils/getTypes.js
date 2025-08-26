@@ -4,7 +4,9 @@ import camelcase from 'camelcase';
 
 function normalizeType(type) {
   if (!type) return null
-  return type.split("|")[0].trim()
+  return type
+    .split("|")[0]
+    .trim()
 }
 
 export function getTypes(ast) {
@@ -16,7 +18,8 @@ export function getTypes(ast) {
   }, []);
 
   let types = new Map();
-  const commonTypesToExclude = ['function', 'integer', 'number', 'string', 'boolean'];
+  const commonTypesToExclude = ['function', 'integer', 'number', 'string',
+    'boolean', 'nil', 'any'];
 
   traverseFields(allFields, (field) => {
     const { params, returns } = field;
