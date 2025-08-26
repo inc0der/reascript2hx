@@ -1,7 +1,3 @@
-import { commonBoolTypes } from "./commonBoolTypes.js";
-import { commonIntTypes } from "./commonIntTypes.js";
-import { commonStringTypes } from "./commonStringTypes.js";
-
 export function determineType(allTypes = [], type, name) {
   if (type.includes('|')) {
     const types = type.split('|').map(t => t.trim());
@@ -44,18 +40,11 @@ export function determineType(allTypes = [], type, name) {
       if (allTypes.has(type)) {
         return allTypes.get(type);
       }
-      if (name && commonIntTypes.includes(name)) {
-        return "Float";
-      }
-      if (name && commonStringTypes.includes(name)) {
-        return "String";
-      }
-      if (name && commonBoolTypes.includes(name)) {
-        return "Bool";
-      }
+  
       if (name && name === "function") {
         return "() -> Void";
       }
+
       return "Dynamic";
   }
 }
