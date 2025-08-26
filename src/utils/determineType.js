@@ -18,6 +18,11 @@ export function determineType(allTypes = [], type, name) {
     return result;
   }
 
+  const isOptional = type.match(/\?/);
+  if (isOptional) {
+    type = type.replace('?', '');
+  }
+
   // NOTE: Handle special case ( ReaProject|nil|0 ) assuming 0 is an int?
   if (!isNaN(type)) {
     return "Int";
