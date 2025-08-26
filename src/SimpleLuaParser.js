@@ -22,6 +22,8 @@ export class SimpleLuaParser {
   }
 
   parse(content) {
+    content = content
+      .normalize('NFKC')
     const lines = content.split("\n");
     const state = new ParserState();
     const result = { };
