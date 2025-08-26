@@ -1,6 +1,6 @@
 export function determineType(allTypes = [], type, name) {
-  if (type.includes('|')) {
-    const types = type.split('|').map(t => t.trim());
+  if (type.includes("|")) {
+    const types = type.split("|").map(t => t.trim());
     const convertedTypes = types.map(t => determineType(allTypes, t, name));
     
     if (convertedTypes.length === 2) {
@@ -16,7 +16,7 @@ export function determineType(allTypes = [], type, name) {
 
   const isOptional = type.match(/\?/);
   if (isOptional) {
-    type = type.replace('?', '');
+    type = type.replace("?", "");
   }
 
   // NOTE: Handle special case ( ReaProject|nil|0 ) assuming 0 is an int?

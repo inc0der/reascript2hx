@@ -1,57 +1,57 @@
-import camelcase from 'camelcase';
+import camelcase from "camelcase";
 
 export function enhancedCamelCase (str, customStems = []) {
   const commonStems = [
-    'x',
-    'y',
-    'w',
-    'h',
-    'face',
-    'list',
-    'id',
-    'img',
-    'digits',
-    'state',
-    'idx',
-    'want',
-    'master',
-    'time',
-    'pos',
-    'dest',
-    'script',
-    'fn',
-    'line',
-    'tempo',
-    'change',
-    'set',
-    'flag',
-    'key',
-    'what',
-    'units',
-    'name',
-    'source',
-    'dir',
-    'play',
-    'gang',
-    'api',
-    'url',
-    'rate', 
-    'arm', 
-    'rpc',
-    'uuid',
+    "x",
+    "y",
+    "w",
+    "h",
+    "face",
+    "list",
+    "id",
+    "img",
+    "digits",
+    "state",
+    "idx",
+    "want",
+    "master",
+    "time",
+    "pos",
+    "dest",
+    "script",
+    "fn",
+    "line",
+    "tempo",
+    "change",
+    "set",
+    "flag",
+    "key",
+    "what",
+    "units",
+    "name",
+    "source",
+    "dir",
+    "play",
+    "gang",
+    "api",
+    "url",
+    "rate", 
+    "arm", 
+    "rpc",
+    "uuid",
     ...customStems];
 
   function findLongestStem (word, stems) {
     return stems.reduce((longest, stem) =>
       word.toLowerCase().includes(stem.toLowerCase()) && stem.length > longest.length ? stem : longest
-      , '');
+      , "");
   }
 
   let result = camelcase(str);
 
   if (!/[A-Z]/.test(result.slice(1))) {
     let word = result;
-    let newResult = '';
+    let newResult = "";
     while (word.length > 0) {
       const stem = findLongestStem(word, commonStems);
       if (stem && word.toLowerCase().indexOf(stem.toLowerCase()) > 0) {

@@ -23,7 +23,7 @@ export class SimpleLuaParser {
 
   parse(content) {
     content = content
-      .normalize('NFKC')
+      .normalize("NFKC")
     const lines = content.split("\n");
     const state = new ParserState();
     const result = { };
@@ -60,23 +60,23 @@ export class SimpleLuaParser {
         if (match) {
           const paramText = match[1].trim();
           
-          const spaceIndex = paramText.indexOf(' ');
+          const spaceIndex = paramText.indexOf(" ");
           if (spaceIndex === -1) return;
           
           const namepart = paramText.substring(0, spaceIndex);
           const typeAndDesc = paramText.substring(spaceIndex + 1);
           
-          const isOptional = namepart.endsWith('?');
+          const isOptional = namepart.endsWith("?");
           const name = isOptional ? namepart.slice(0, -1) : namepart;
           
           const typeParts = typeAndDesc.trim().split(/\s+/);
           const type = typeParts[0];
-          const description = typeParts.slice(1).join(' ') || null;
+          const description = typeParts.slice(1).join(" ") || null;
           
           state.params.push({ 
             name, 
             type, 
-            isVarargs: name === '...',
+            isVarargs: name === "...",
             optional: isOptional,
             description 
           });

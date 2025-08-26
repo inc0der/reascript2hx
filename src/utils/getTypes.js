@@ -1,6 +1,6 @@
-import { traverseFields } from './traverseFields.js';
+import { traverseFields } from "./traverseFields.js";
 
-import camelcase from 'camelcase';
+import camelcase from "camelcase";
 
 function normalizeType(type) {
   if (!type) return null
@@ -18,8 +18,8 @@ export function getTypes(ast) {
   }, []);
 
   let types = new Map();
-  const commonTypesToExclude = ['function', 'integer', 'number', 'string',
-    'boolean', 'nil', 'any'];
+  const commonTypesToExclude = ["function", "integer", "number", "string",
+    "boolean", "nil", "any"];
 
   traverseFields(allFields, (field) => {
     const { params, returns } = field;
