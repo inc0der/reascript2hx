@@ -2,7 +2,12 @@ import { traverseFields } from './traverseFields.js';
 
 import camelcase from 'camelcase';
 
-export function getTypes (ast) {
+function normalizeType(type) {
+  if (!type) return null
+  return type.split("|")[0].trim()
+}
+
+export function getTypes(ast) {
   const allFields = Object.values(ast).reduce((acc, item) => {
     if (item) {
       return acc.concat(Object.values(item));
@@ -11,36 +16,29 @@ export function getTypes (ast) {
   }, []);
 
   let types = new Map();
-
   const commonTypesToExclude = ['function', 'integer', 'number', 'string', 'boolean'];
 
   traverseFields(allFields, (field) => {
-
     const { params, returns } = field;
 
     if (params) {
       for (const param of params) {
-        if (!param.type || commonTypesToExclude.includes(param.type)) continue
-        types.set(param.type, param.type)
+        const raw = normalizeType(param.type);
+        if (!raw || commonTypesToExclude.includes(raw.toLowerCase())) continue;
+        types.set(raw, raw);
       }
     }
 
     if (returns) {
-      if (!returns.type || commonTypesToExclude.includes(returns.type)) {
-        return
-      }
-      types.set(returns.type, returns.type)
+      const raw = normalizeType(returns.type);
+      if (!raw || commonTypesToExclude.includes(raw.toLowerCase())) return;
+      types.set(raw, raw);
     }
-  });
+  })
 
   for (const [key, value] of types) {
-    let name = key;
-    if (key.includes('|')) {
-      name = key.split('|')[0];
-    }
-    types.set(name, camelcase(name, { pascalCase: true }));
+    types.set(key, camelcase(value, { pascalCase: true }));
   }
-
 
   return types
 }
