@@ -13,7 +13,7 @@ export function createHaxeFunction (field, allTypes) {
   if (params) {
     const paramStrings = [];
     for (const param of params) {
-      const { type, optional, isVarargs } = param;
+      const { isVarargs } = param;
       const haxeType = determineType(allTypes, param.type, param.name) || "Dynamic";
       const optionalString = param.optional ? "?" : "";
 
