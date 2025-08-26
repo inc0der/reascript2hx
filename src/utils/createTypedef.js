@@ -1,9 +1,9 @@
-import * as changeCase from 'change-case';
+import camelcase from 'camelcase';
 import { determineType } from './determineType.js'
 
 export function createTypedefs (field, allTypes) {
   const { name, returns } = field;
-  const structName = `Result${changeCase.pascalCase(name)}`;
+  const structName = `Result${camelcase(name, { pascalCase: true })}`;
 
   const fields = returns.map(ret => {
     const type = determineType(allTypes, ret.type);
