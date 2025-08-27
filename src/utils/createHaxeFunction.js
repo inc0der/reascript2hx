@@ -38,7 +38,7 @@ export function createHaxeFunction (field, allTypes) {
     functionSignature += ": " + determineType(allTypes, returns[0].type);
  } else if (returns.length > 1) {
     const pascalName = camelcase(name, { pascalCase: true })
-    const structName = `Result${pascalName}`;
+    const structName = `${pascalName}Returns`;
     functionSignature += `: ${structName}`;
  }
 
