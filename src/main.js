@@ -5,7 +5,7 @@ import { getTypes } from "./utils/getTypes.js";
 import { traverseFields } from "./utils/traverseFields.js";
 import { createHaxeFunction } from "./utils/createHaxeFunction.js";
 import { createHaxeVariable } from "./utils/createHaxeVariable.js";
-import { createTypedefs } from "./utils/createTypedef.js";
+import { createMultiReturnsClass } from "./utils/createMultiReturnsClass.js";
 
 
 const gfxFunctions = [];
@@ -22,7 +22,7 @@ const types = getTypes({ ...reaperTree, ...imguiTree });
 traverseFields(reaperTree.gfx, (field) => {
   if (field.fieldType === "function") {
     if (field.returns.length > 1) {
-      typedefs.push(createTypedefs(field, types));
+      typedefs.push(createMultiReturnsClass(field, types));
     }
     gfxFunctions.push(createHaxeFunction(field, types));
   } else if (field.fieldType === "variable") {
@@ -38,7 +38,7 @@ traverseFields(reaperTree.reaper, (field) => {
       return;
     }
     if (field.returns.length > 1) {
-      typedefs.push(createTypedefs(field, types));
+      typedefs.push(createMultiReturnsClass(field, types));
     }
     reaperFunctions.push(createHaxeFunction(field, types));
   } else if (field.fieldType === "variable") {
@@ -50,7 +50,7 @@ traverseFields(reaperTree.reaper, (field) => {
 traverseFields(imguiTree.ImGui, (field) => {
   if (field.fieldType === "function") {
     if (field.returns.length > 1) {
-      typedefs.push(createTypedefs(field, types));
+      typedefs.push(createMultiReturnsClass(field, types));
     }
     imguiFunctions.push(createHaxeFunction(field, types));
   } else if (field.fieldType === "variable") {
