@@ -71,7 +71,7 @@ reaperTypes;
 
 
 function createExternClass(nativeName, className, functions) {
-  return `package reaper;\n\nimport reaper.Types;\n\n@:native("${nativeName}")\nextern class ${className} {\n${functions.join("\n")}\n}`;
+  return `package reaper;\n\nusing reaper.Types;\n\n@:native("${nativeName}")\nextern class ${className} {\n${functions.join("\n")}\n}`;
 }
 
 const reaperClass = createExternClass("reaper", "Reaper", reaperFunctions);
