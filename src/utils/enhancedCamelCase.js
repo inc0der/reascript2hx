@@ -49,6 +49,11 @@ export function enhancedCamelCase (str, customStems = []) {
 
   let result = camelcase(str);
 
+  if (/^\d+$/.test(result)) {
+    // If it's just a number, prepend underscore since camelcase removes it and breaks externs
+    result = "_" + result;
+  }
+
   if (!/[A-Z]/.test(result.slice(1))) {
     let word = result;
     let newResult = "";
