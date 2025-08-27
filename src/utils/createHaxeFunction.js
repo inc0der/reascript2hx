@@ -30,7 +30,7 @@ export function createHaxeFunction (field, allTypes) {
     functionSignature += "()";
   }
 
-  if (!returns) {
+  if (!returns || returns.length <= 0) {
     functionSignature += ": Void";
   }
 
