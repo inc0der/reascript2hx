@@ -26,5 +26,19 @@ npm run generate -- \
 
 Run `node src/main.js --help` for the available options.
 
+The generated `Reaper.hx`, `Graphics.hx`, `ImGui.hx`, and `Types.hx` files are
+build artifacts. They may be overwritten on regeneration, so keep handwritten
+facades and application code outside the generated output directory.
+
+When installed as a dependency, the CLI is also available as:
+
+```bash
+npx reascript2hx --output path/to/generated --package my.reaper
+```
+
+The package includes the generator source and bundled Lua definitions. A
+downstream bindings project should pin the generator version or Git commit and
+commit its generated Haxe output separately.
+
 Credits:
 [Sexan](https://github.com/GoranKovac) for the Lua documentation provided by their awesome [Reaper Reascript](https://github.com/AntoineBalaine/vscode-reascript-extension) VSCode extension

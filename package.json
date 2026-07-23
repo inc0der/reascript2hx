@@ -3,6 +3,16 @@
   "version": "1.0.0",
   "description": "ReaScript2Hx is a tool for converting Reaper's ReaScript Lua documentation to Haxe.",
   "main": "./src/main.js",
+  "bin": {
+    "reascript2hx": "./src/main.js"
+  },
+  "files": [
+    "src",
+    "resources",
+    "README.md",
+    "LICENSE",
+    "reascript_haxe_logo.png"
+  ],
   "type": "module",
   "scripts": {
     "build": "node ./src/main.js",

@@ -51,7 +51,23 @@ export function createHaxeFunction (field, allTypes, reportUnknownType = () => {
     functionSignature += `: ${structName}`;
  }
 
-  const comment = formatAsMultilineComment(description)
+  const documentation = [];
+  if (description) {
+    documentation.push(description);
+  }
+  for (const param of params || []) {
+    if (param.description) {
+      const haxeName = haxeReservedKeywords[param.name] || (param.isVarargs ? "args" : enhancedCamelCase(param.name));
+      documentation.push(`@param ${haxeName} ${param.description}`);
+    }
+  }
+  for (const [index, returnValue] of (returns || []).entries()) {
+    if (returnValue.description) {
+      documentation.push(`@return ${returnValue.name || `value${index}`} ${returnValue.description}`);
+    }
+  }
+
+  const comment = formatAsMultilineComment(documentation.join("\n"));
   const functionDefinition = `${comment}\n@:native("${name}")\npublic static function ${functionSignature};`;
 
   return functionDefinition;

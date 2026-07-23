@@ -83,6 +83,19 @@ test("function generation handles reserved and optional parameter names", () => 
   assert.match(output, /@:native\("get_value"\)/);
 });
 
+test("function documentation includes parameter and return descriptions", () => {
+  const output = createHaxeFunction({
+    name: "get_value",
+    description: "Fetches a value from the current object.",
+    params: [{ name: "track", type: "Track", description: "Track to inspect." }],
+    returns: [{ type: "string", name: "value", description: "The current value." }]
+  }, new Map([["Track", "Track"]]));
+
+  assert.match(output, /Fetches a value from the current object\./);
+  assert.match(output, /@param track Track to inspect\./);
+  assert.match(output, /@return value The current value\./);
+});
+
 test("function generation uses Null for nullable returns", () => {
   const output = createHaxeFunction({
     name: "get_track",
@@ -97,7 +110,7 @@ test("multi-return generation creates named fields", () => {
   const output = createMultiReturnsClass({
     name: "get_handles",
     returns: [
-      { name: "first", type: "Track" },
+      { name: "first", type: "Track", description: "First result." },
       { name: "second", type: "boolean" },
       { name: null, type: "string" }
     ]
@@ -105,6 +118,7 @@ test("multi-return generation creates named fields", () => {
 
   assert.match(output, /@:multiReturn extern class GetHandlesReturns/);
   assert.match(output, /var first:Track;/);
+  assert.match(output, /\* First result\.\s+\*\//);
   assert.match(output, /var second:Bool;/);
   assert.match(output, /var value2:String;/);
 });

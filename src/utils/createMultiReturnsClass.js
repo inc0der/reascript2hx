@@ -1,5 +1,6 @@
 import { determineType } from "./determineType.js";
 import { enhancedCamelCase, enhancedPascalCase } from "./enhancedCamelCase.js";
+import { formatAsMultilineComment } from "./formatAsMultilineComment.js";
 
 export function createMultiReturnsClass(field, allTypes, reportUnknownType = () => {}) {
   const { name, returns } = field;
@@ -22,7 +23,8 @@ export function createMultiReturnsClass(field, allTypes, reportUnknownType = () 
       seen[baseName] = 1;
     }
     
-    return `  var ${baseName}:${type};`;
+    const comment = ret.description ? `${formatAsMultilineComment(ret.description)}\n` : "";
+    return `${comment}  var ${baseName}:${type};`;
   }).join("\n");
   
 

@@ -1,15 +1,15 @@
 export function formatAsMultilineComment (text, maxLineLength = 80) {
   function wrapText (text, maxLength) {
-    const words = text.split(' ');
+    const words = text.trim().split(/\s+/);
     const lines = [];
     let currentLine = '';
 
     for (const word of words) {
-      if (currentLine.length + word.length + 1 <= maxLength) {
-        currentLine += (currentLine ? ' ' : '') + word;
-      } else {
+      if (currentLine && currentLine.length + word.length + 1 > maxLength) {
         lines.push(currentLine);
         currentLine = word;
+      } else {
+        currentLine += (currentLine ? ' ' : '') + word;
       }
     }
     if (currentLine) {
@@ -22,7 +22,9 @@ export function formatAsMultilineComment (text, maxLineLength = 80) {
     return '/** No description available */';
   }
 
-  const wrappedLines = wrapText(text, maxLineLength - 3); // -3 for " * "
+  const wrappedLines = String(text)
+    .split(/\r?\n/)
+    .flatMap(line => line.trim() ? wrapText(line, maxLineLength - 3) : [""]); // -3 for " * "
 
   const commentLines = wrappedLines.map(line => ` * ${line}`);
   const formattedComment = [
