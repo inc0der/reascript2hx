@@ -6,8 +6,8 @@ function normalizeTypes(type) {
   if (!type) return [];
   return type
     .split("|")
-    .map(value => value.trim())
-    .filter(Boolean);
+    .map(value => value.trim().replace(/\?$/, ""))
+    .filter(value => /^[A-Za-z_][A-Za-z0-9_]*$/.test(value));
 }
 
 export function getTypes(ast) {

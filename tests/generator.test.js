@@ -59,6 +59,21 @@ test("getTypes collects custom types from every return value", () => {
   assert.equal(unionTypes.get("Item"), "Item");
 });
 
+test("getTypes ignores optional markers and numeric union literals", () => {
+  const types = getTypes({
+    API: [{
+      fieldType: "function",
+      params: [{ type: "ReaProject|nil|0" }],
+      returns: [{ type: "string?" }]
+    }]
+  });
+
+  assert.equal(types.has("ReaProject"), true);
+  assert.equal(types.has("0"), false);
+  assert.equal(types.has("string"), false);
+  assert.equal(types.has("string?"), false);
+});
+
 test("determineType converts primitive, nullable, and custom types", () => {
   const types = new Map([["Track", "Track"], ["Item", "Item"]]);
 
@@ -67,6 +82,8 @@ test("determineType converts primitive, nullable, and custom types", () => {
   assert.equal(determineType(types, "Track|nil"), "Null<Track>");
   assert.equal(determineType(types, "Track|nil|0"), "Null<haxe.extern.EitherType<Track, Int>>");
   assert.equal(determineType(types, "Track|Item"), "haxe.extern.EitherType<Track, Item>");
+  assert.equal(determineType(types, "string?"), "Null<String>");
+  assert.equal(determineType(types, "reaper.array"), "ReaperArray");
 });
 
 test("function generation handles reserved and optional parameter names", () => {

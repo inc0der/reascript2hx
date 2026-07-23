@@ -1,4 +1,10 @@
 export function determineType(allTypes = [], type, name, onUnknownType = null) {
+  const isOptional = type.endsWith("?");
+  if (isOptional) {
+    const baseType = determineType(allTypes, type.slice(0, -1), name, onUnknownType);
+    return `Null<${baseType}>`;
+  }
+
   if (type.includes("|")) {
     const types = type.split("|").map(t => t.trim());
     const isNullable = types.includes("nil");
@@ -11,11 +17,6 @@ export function determineType(allTypes = [], type, name, onUnknownType = null) {
     }
 
     return isNullable ? `Null<${result}>` : result;
-  }
-
-  const isOptional = type.match(/\?/);
-  if (isOptional) {
-    type = type.replace("?", "");
   }
 
   // NOTE: Handle special case ( ReaProject|nil|0 ) assuming 0 is an int?
@@ -34,6 +35,8 @@ export function determineType(allTypes = [], type, name, onUnknownType = null) {
       return "String";
     case "nil":
       return "Void";
+    case "reaper.array":
+      return "ReaperArray";
 
     default:
       if (allTypes.has(type)) {
