@@ -9,6 +9,7 @@ import { SimpleLuaParser } from "../src/SimpleLuaParser.js";
 import { createHaxeFunction } from "../src/utils/createHaxeFunction.js";
 import { createMultiReturnsClass } from "../src/utils/createMultiReturnsClass.js";
 import { determineType } from "../src/utils/determineType.js";
+import { enhancedCamelCase, enhancedPascalCase } from "../src/utils/enhancedCamelCase.js";
 import { getTypes } from "../src/utils/getTypes.js";
 
 const fixture = `
@@ -20,6 +21,14 @@ const fixture = `
 ---@return SecondHandle second The second handle
 function API.getHandles(track, function)
 `;
+
+test("identifier normalization uses word boundaries instead of substring stems", () => {
+  assert.equal(enhancedCamelCase("popup_max_height_in_items"), "popupMaxHeightInItems");
+  assert.equal(enhancedCamelCase("resource_id"), "resourceId");
+  assert.equal(enhancedCamelCase("CF_Preview"), "cfPreview");
+  assert.equal(enhancedCamelCase("1"), "_1");
+  assert.equal(enhancedPascalCase("get_media_item"), "GetMediaItem");
+});
 
 test("parser preserves parameters and multiple returns", () => {
   const api = new SimpleLuaParser().parse(fixture).API;
@@ -89,13 +98,15 @@ test("multi-return generation creates named fields", () => {
     name: "get_handles",
     returns: [
       { name: "first", type: "Track" },
-      { name: "second", type: "boolean" }
+      { name: "second", type: "boolean" },
+      { name: null, type: "string" }
     ]
   }, new Map([["Track", "Track"]]));
 
   assert.match(output, /@:multiReturn extern class GetHandlesReturns/);
   assert.match(output, /var first:Track;/);
   assert.match(output, /var second:Bool;/);
+  assert.match(output, /var value2:String;/);
 });
 
 test("CLI parsing accepts generation options", () => {

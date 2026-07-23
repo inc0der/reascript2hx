@@ -1,87 +1,29 @@
-import camelcase from "camelcase";
+function tokenize(value) {
+  return String(value)
+    .trim()
+    .replace(/([a-z\d])([A-Z])/g, "$1 $2")
+    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
+    .split(/[^A-Za-z0-9]+/)
+    .filter(Boolean)
+    .map(token => token.toLowerCase());
+}
 
-export function enhancedCamelCase (str, customStems = []) {
-  const commonStems = [
-    "x",
-    "y",
-    "w",
-    "h",
-    "face",
-    "list",
-    "id",
-    "img",
-    "digits",
-    "state",
-    "idx",
-    "want",
-    "master",
-    "time",
-    "pos",
-    "dest",
-    "script",
-    "fn",
-    "line",
-    "tempo",
-    "change",
-    "set",
-    "flag",
-    "key",
-    "what",
-    "units",
-    "name",
-    "source",
-    "dir",
-    "play",
-    "gang",
-    "api",
-    "url",
-    "rate", 
-    "arm", 
-    "rpc",
-    "uuid",
-    ...customStems];
+function capitalize(token) {
+  return token.charAt(0).toUpperCase() + token.slice(1);
+}
 
-  function findLongestStem (word, stems) {
-    return stems.reduce((longest, stem) =>
-      word.toLowerCase().includes(stem.toLowerCase()) && stem.length > longest.length ? stem : longest
-      , "");
+export function enhancedCamelCase(str, _customStems = []) {
+  const tokens = tokenize(str);
+  if (tokens.length === 0) return "_";
+
+  let result = tokens[0] + tokens.slice(1).map(capitalize).join("");
+  if (/^\d/.test(result)) {
+    result = `_${result}`;
   }
-
-  let result = camelcase(str);
-
-  if (/^\d+$/.test(result)) {
-    // If it's just a number, prepend underscore since camelcase removes it and breaks externs
-    result = "_" + result;
-  }
-
-  if (!/[A-Z]/.test(result.slice(1))) {
-    let word = result;
-    let newResult = "";
-    while (word.length > 0) {
-      const stem = findLongestStem(word, commonStems);
-      if (stem && word.toLowerCase().indexOf(stem.toLowerCase()) > 0) {
-        const index = word.toLowerCase().indexOf(stem.toLowerCase());
-        newResult += word.slice(0, index) + stem.charAt(0).toUpperCase() + stem.slice(1).toLowerCase();
-        word = word.slice(index + stem.length);
-      } else {
-        newResult += word.charAt(0);
-        word = word.slice(1);
-      }
-    }
-    result = newResult.charAt(0).toLowerCase() + newResult.slice(1);
-  }
-
-  commonStems.forEach(stem => {
-    const lowercaseStem = stem.toLowerCase();
-    let index = result.toLowerCase().indexOf(lowercaseStem);
-    while (index > 0) {
-      result =
-        result.slice(0, index) +
-        result.charAt(index).toUpperCase() +
-        result.slice(index + 1);
-      index = result.toLowerCase().indexOf(lowercaseStem, index + 1);
-    }
-  });
-
   return result;
+}
+
+export function enhancedPascalCase(str, customStems = []) {
+  const result = enhancedCamelCase(str, customStems);
+  return result.charAt(0).toUpperCase() + result.slice(1);
 }

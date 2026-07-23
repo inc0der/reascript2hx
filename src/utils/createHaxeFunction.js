@@ -1,6 +1,5 @@
 import { formatAsMultilineComment } from "./formatAsMultilineComment.js";
-import camelcase from "camelcase";
-import { enhancedCamelCase } from "./enhancedCamelCase.js";
+import { enhancedCamelCase, enhancedPascalCase } from "./enhancedCamelCase.js";
 import { haxeReservedKeywords } from "./haxeReserved.js";
 import { determineType } from "./determineType.js";
 
@@ -8,7 +7,7 @@ import { determineType } from "./determineType.js";
 export function createHaxeFunction (field, allTypes) {
   const { description, name, params, returns } = field;
 
-  let functionSignature = camelcase(name);
+  let functionSignature = enhancedCamelCase(name);
 
   if (params) {
     const paramStrings = [];
@@ -37,7 +36,7 @@ export function createHaxeFunction (field, allTypes) {
   if (returns.length === 1) {
     functionSignature += ": " + determineType(allTypes, returns[0].type);
  } else if (returns.length > 1) {
-    const pascalName = camelcase(name, { pascalCase: true })
+    const pascalName = enhancedPascalCase(name);
     const structName = `${pascalName}Returns`;
     functionSignature += `: ${structName}`;
  }
