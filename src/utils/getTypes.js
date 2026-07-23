@@ -2,11 +2,12 @@ import { traverseFields } from "./traverseFields.js";
 
 import camelcase from "camelcase";
 
-function normalizeType(type) {
-  if (!type) return null
+function normalizeTypes(type) {
+  if (!type) return [];
   return type
-    .split("|")[0]
-    .trim()
+    .split("|")
+    .map(value => value.trim())
+    .filter(Boolean);
 }
 
 export function getTypes(ast) {
@@ -26,17 +27,19 @@ export function getTypes(ast) {
 
     if (params) {
       for (const param of params) {
-        const raw = normalizeType(param.type);
-        if (!raw || commonTypesToExclude.includes(raw.toLowerCase())) continue;
-        types.set(raw, raw);
+        for (const raw of normalizeTypes(param.type)) {
+          if (commonTypesToExclude.includes(raw.toLowerCase())) continue;
+          types.set(raw, raw);
+        }
       }
     }
 
     if (returns) {
       for (const returnValue of returns) {
-        const raw = normalizeType(returnValue.type);
-        if (!raw || commonTypesToExclude.includes(raw.toLowerCase())) continue;
-        types.set(raw, raw);
+        for (const raw of normalizeTypes(returnValue.type)) {
+          if (commonTypesToExclude.includes(raw.toLowerCase())) continue;
+          types.set(raw, raw);
+        }
       }
     }
   })

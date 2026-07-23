@@ -1,17 +1,16 @@
 export function determineType(allTypes = [], type, name) {
   if (type.includes("|")) {
     const types = type.split("|").map(t => t.trim());
-    const convertedTypes = types.map(t => determineType(allTypes, t, name));
-    
-    if (convertedTypes.length === 2) {
-      return `haxe.extern.EitherType<${convertedTypes[0]}, ${convertedTypes[1]}>`;
-    }
-    
+    const isNullable = types.includes("nil");
+    const valueTypes = isNullable ? types.filter(t => t !== "nil") : types;
+    const convertedTypes = valueTypes.map(t => determineType(allTypes, t, name));
+
     let result = convertedTypes[0];
     for (let i = 1; i < convertedTypes.length; i++) {
       result = `haxe.extern.EitherType<${result}, ${convertedTypes[i]}>`;
     }
-    return result;
+
+    return isNullable ? `Null<${result}>` : result;
   }
 
   const isOptional = type.match(/\?/);

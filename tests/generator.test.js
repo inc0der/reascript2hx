@@ -39,14 +39,25 @@ test("getTypes collects custom types from every return value", () => {
   assert.equal(types.get("FirstHandle"), "FirstHandle");
   assert.equal(types.get("SecondHandle"), "SecondHandle");
   assert.equal(types.has("boolean"), false);
+
+  const unionTypes = getTypes({
+    API: [{
+      fieldType: "function",
+      params: [],
+      returns: [{ type: "Track|Item|nil" }]
+    }]
+  });
+  assert.equal(unionTypes.get("Item"), "Item");
 });
 
 test("determineType converts primitive, nullable, and custom types", () => {
-  const types = new Map([["Track", "Track"]]);
+  const types = new Map([["Track", "Track"], ["Item", "Item"]]);
 
   assert.equal(determineType(types, "integer"), "Int");
   assert.equal(determineType(types, "Track"), "Track");
-  assert.equal(determineType(types, "Track|nil"), "haxe.extern.EitherType<Track, Void>");
+  assert.equal(determineType(types, "Track|nil"), "Null<Track>");
+  assert.equal(determineType(types, "Track|nil|0"), "Null<haxe.extern.EitherType<Track, Int>>");
+  assert.equal(determineType(types, "Track|Item"), "haxe.extern.EitherType<Track, Item>");
 });
 
 test("function generation handles reserved and optional parameter names", () => {
@@ -61,6 +72,16 @@ test("function generation handles reserved and optional parameter names", () => 
 
   assert.match(output, /public static function getValue\(_function: Bool, \?track: Track\): String;/);
   assert.match(output, /@:native\("get_value"\)/);
+});
+
+test("function generation uses Null for nullable returns", () => {
+  const output = createHaxeFunction({
+    name: "get_track",
+    params: [],
+    returns: [{ type: "Track|nil" }]
+  }, new Map([["Track", "Track"]]));
+
+  assert.match(output, /public static function getTrack\(\): Null<Track>;/);
 });
 
 test("multi-return generation creates named fields", () => {
