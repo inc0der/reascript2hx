@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "current": {
+    "repository": "https://github.com/AntoineBalaine/vscode-reascript-extension",
+    "ref": "main",
+    "fetchedAt": "2026-07-23",
+    "status": "local snapshot; upstream commit not recorded",
+    "files": {
+      "imgui_defs_0.9.lua": {
+        "path": "resources/imgui_defs_0.9.lua",
+        "sha256": "12afd4ff2b67a158f74cbfbb8a313bb2bf04a0baeb376951f95d63afcce9fa26",
+        "embeddedVersion": {
+          "generatedFor": "0.9.2-7-g5609a5d",
+          "api": "0.9.3"
+        }
+      },
+      "reaper-types.lua": {
+        "path": "resources/reaper-types.lua",
+        "sha256": "f483f7c7cc6f2386e971e33c443862b2838938326bddab3d7c5cce8944a398d4"
+      },
+      "reawwise_defs.lua": {
+        "path": "resources/reawwise_defs.lua",
+        "sha256": "66bc0bf954421b139d80bf7aa17d69b883b5b3a339403522dd3d626898b0ca6f"
+      },
+      "Sexan_reaper_defs.lua": {
+        "path": "resources/Sexan_reaper_defs.lua",
+        "sha256": "02884391f6caadad123fdf6f01cd84ca0c853e29cfbbda4355f63117683281af"
+      }
+    }
+  },
+  "history": []
+}

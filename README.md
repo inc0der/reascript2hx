@@ -40,5 +40,10 @@ The package includes the generator source and bundled Lua definitions. A
 downstream bindings project should pin the generator version or Git commit and
 commit its generated Haxe output separately.
 
+The documentation snapshot is tracked in `resources/manifest.json`. It records
+the source revision, commit date, fetch time, SHA-256 hash, and embedded API
+version when available. Run `npm run updateLuaDocs` to fetch a new snapshot and
+append the previous one to the manifest history.
+
 Credits:
 [Sexan](https://github.com/GoranKovac) for the Lua documentation provided by their awesome [Reaper Reascript](https://github.com/AntoineBalaine/vscode-reascript-extension) VSCode extension
