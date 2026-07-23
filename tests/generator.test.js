@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import test from "node:test";
 
+import { generateExterns, parseCliArgs } from "../src/main.js";
 import { SimpleLuaParser } from "../src/SimpleLuaParser.js";
 import { createHaxeFunction } from "../src/utils/createHaxeFunction.js";
 import { createMultiReturnsClass } from "../src/utils/createMultiReturnsClass.js";
@@ -71,4 +75,36 @@ test("multi-return generation creates named fields", () => {
   assert.match(output, /@:multiReturn extern class GetHandlesReturns/);
   assert.match(output, /var first:Track;/);
   assert.match(output, /var second:Bool;/);
+});
+
+test("CLI parsing accepts generation options", () => {
+  const options = parseCliArgs([
+    "--reaper", "custom-reaper.lua",
+    "--imgui", "custom-imgui.lua",
+    "--output", "generated",
+    "--package", "my.reaper"
+  ]);
+
+  assert.equal(options.reaperPath, path.resolve("custom-reaper.lua"));
+  assert.equal(options.imguiPath, path.resolve("custom-imgui.lua"));
+  assert.equal(options.outputDir, path.resolve("generated"));
+  assert.equal(options.packageName, "my.reaper");
+});
+
+test("generation writes configurable package output", () => {
+  const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), "reascript2hx-"));
+
+  try {
+    generateExterns({
+      reaperPath: path.resolve("resources/Sexan_reaper_defs.lua"),
+      imguiPath: path.resolve("resources/imgui_defs_0.9.lua"),
+      outputDir,
+      packageName: "my.reaper"
+    });
+
+    assert.match(fs.readFileSync(path.join(outputDir, "Reaper.hx"), "utf8"), /^package my\.reaper;/);
+    assert.match(fs.readFileSync(path.join(outputDir, "Types.hx"), "utf8"), /^package my\.reaper;/);
+  } finally {
+    fs.rmSync(outputDir, { recursive: true, force: true });
+  }
 });

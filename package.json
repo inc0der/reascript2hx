@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "node ./src/main.js",
+    "generate": "node ./src/main.js",
     "updateLuaDocs": "node ./resources/updateLuaDocs.js",
     "test": "node --test"
   },
