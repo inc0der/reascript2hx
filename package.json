@@ -7,7 +7,7 @@
   "scripts": {
     "build": "node ./src/main.js",
     "updateLuaDocs": "node ./resources/updateLuaDocs.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test"
   },
   "keywords": [
     "Reaper",
