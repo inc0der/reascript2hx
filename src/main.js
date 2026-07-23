@@ -8,6 +8,7 @@ import { traverseFields } from "./utils/traverseFields.js";
 import { createHaxeFunction } from "./utils/createHaxeFunction.js";
 import { createHaxeVariable } from "./utils/createHaxeVariable.js";
 import { createMultiReturnsClass } from "./utils/createMultiReturnsClass.js";
+import { enhancedCamelCase, enhancedPascalCase } from "./utils/enhancedCamelCase.js";
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -22,18 +23,34 @@ function createExternClass(nativeName, className, functions, packageName) {
   return `package ${packageName};\n\nusing ${packageName}.Types;\n\n@:native("${nativeName}")\nextern class ${className} {\n${functions.join("\n")}\n}`;
 }
 
-function addFields(fields, types, functions, typedefs, skipDuplicate = false) {
+function recordIdentifier(registry, generatedName, nativeName, context) {
+  const previous = registry.get(generatedName);
+  if (previous) {
+    throw new Error(
+      `Haxe identifier collision in ${context}: "${previous}" and "${nativeName}" both generate "${generatedName}"`
+    );
+  }
+  registry.set(generatedName, nativeName);
+}
+
+function addFields(fields, types, functions, typedefs, options = {}) {
+  const { className, typeNames, skipDuplicate = false } = options;
+  const memberNames = new Map();
+
   traverseFields(fields || [], (field) => {
     if (field.fieldType === "function") {
       if (skipDuplicate && field.name === "GetMediaItem_Track") {
         // GetMediaItem_Track is the same as GetMediaItemTrack after name conversion.
         return;
       }
+      recordIdentifier(memberNames, enhancedCamelCase(field.name), field.name, className);
       if (field.returns.length > 1) {
+        recordIdentifier(typeNames, enhancedPascalCase(field.name) + "Returns", field.name, "Types");
         typedefs.push(createMultiReturnsClass(field, types));
       }
       functions.push(createHaxeFunction(field, types));
     } else if (field.fieldType === "variable") {
+      recordIdentifier(memberNames, enhancedCamelCase(field.name), field.name, className);
       functions.push(createHaxeVariable(field, types));
     }
   });
@@ -50,10 +67,27 @@ export function generateExterns(options = {}) {
   const imguiFunctions = [];
   const reaperTypes = [];
   const typedefs = [];
+  const typeNames = new Map();
 
-  addFields(reaperTree.gfx, types, gfxFunctions, typedefs);
-  addFields(reaperTree.reaper, types, reaperFunctions, typedefs, true);
-  addFields(imguiTree.ImGui, types, imguiFunctions, typedefs);
+  for (const [key, value] of types) {
+    if (key !== "reaper_array") {
+      recordIdentifier(typeNames, value, key, "Types");
+    }
+  }
+
+  addFields(reaperTree.gfx, types, gfxFunctions, typedefs, {
+    className: "Graphics",
+    typeNames
+  });
+  addFields(reaperTree.reaper, types, reaperFunctions, typedefs, {
+    className: "Reaper",
+    typeNames,
+    skipDuplicate: true
+  });
+  addFields(imguiTree.ImGui, types, imguiFunctions, typedefs, {
+    className: "ImGui",
+    typeNames
+  });
 
   for (const [key, value] of types) {
     if (key === "reaper_array") {

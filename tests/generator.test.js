@@ -140,3 +140,51 @@ test("generation writes configurable package output", () => {
     fs.rmSync(outputDir, { recursive: true, force: true });
   }
 });
+
+test("generation rejects normalized member-name collisions", () => {
+  const fixtureDir = fs.mkdtempSync(path.join(os.tmpdir(), "reascript2hx-collision-"));
+  const outputDir = path.join(fixtureDir, "generated");
+  const reaperPath = path.join(fixtureDir, "reaper.lua");
+  const imguiPath = path.join(fixtureDir, "imgui.lua");
+
+  fs.writeFileSync(reaperPath, `
+function reaper.get_value() end
+function reaper.getValue() end
+`);
+  fs.writeFileSync(imguiPath, "");
+
+  try {
+    assert.throws(
+      () => generateExterns({ reaperPath, imguiPath, outputDir }),
+      /Haxe identifier collision in Reaper:.*generate "getValue"/
+    );
+  } finally {
+    fs.rmSync(fixtureDir, { recursive: true, force: true });
+  }
+});
+
+test("generation rejects normalized multi-return type collisions", () => {
+  const fixtureDir = fs.mkdtempSync(path.join(os.tmpdir(), "reascript2hx-type-collision-"));
+  const outputDir = path.join(fixtureDir, "generated");
+  const reaperPath = path.join(fixtureDir, "reaper.lua");
+  const imguiPath = path.join(fixtureDir, "imgui.lua");
+
+  fs.writeFileSync(reaperPath, `
+---@return string value
+---@return string other
+function gfx.get_value() end
+---@return string value
+---@return string other
+function reaper.getValue() end
+`);
+  fs.writeFileSync(imguiPath, "");
+
+  try {
+    assert.throws(
+      () => generateExterns({ reaperPath, imguiPath, outputDir }),
+      /Haxe identifier collision in Types:.*generate "GetValueReturns"/
+    );
+  } finally {
+    fs.rmSync(fixtureDir, { recursive: true, force: true });
+  }
+});
