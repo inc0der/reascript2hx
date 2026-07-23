@@ -4,7 +4,7 @@ import { haxeReservedKeywords } from "./haxeReserved.js";
 import { determineType } from "./determineType.js";
 
 
-export function createHaxeFunction (field, allTypes) {
+export function createHaxeFunction (field, allTypes, reportUnknownType = () => {}) {
   const { description, name, params, returns } = field;
 
   let functionSignature = enhancedCamelCase(name);
@@ -13,7 +13,12 @@ export function createHaxeFunction (field, allTypes) {
     const paramStrings = [];
     for (const param of params) {
       const { isVarargs } = param;
-      const haxeType = determineType(allTypes, param.type, param.name) || "Dynamic";
+      const haxeType = determineType(
+        allTypes,
+        param.type,
+        param.name,
+        unknownType => reportUnknownType(unknownType, `parameter "${param.name}"`)
+      ) || "Dynamic";
       const optionalString = param.optional ? "?" : "";
 
       if (haxeReservedKeywords[param.name]) {
@@ -34,7 +39,12 @@ export function createHaxeFunction (field, allTypes) {
   }
 
   if (returns.length === 1) {
-    functionSignature += ": " + determineType(allTypes, returns[0].type);
+    functionSignature += ": " + determineType(
+      allTypes,
+      returns[0].type,
+      null,
+      unknownType => reportUnknownType(unknownType, "return value")
+    );
  } else if (returns.length > 1) {
     const pascalName = enhancedPascalCase(name);
     const structName = `${pascalName}Returns`;

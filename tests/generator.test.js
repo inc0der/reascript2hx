@@ -188,3 +188,35 @@ function reaper.getValue() end
     fs.rmSync(fixtureDir, { recursive: true, force: true });
   }
 });
+
+test("generation reports type fallbacks through the diagnostic hook", () => {
+  const fixtureDir = fs.mkdtempSync(path.join(os.tmpdir(), "reascript2hx-type-diagnostic-"));
+  const outputDir = path.join(fixtureDir, "generated");
+  const reaperPath = path.join(fixtureDir, "reaper.lua");
+  const imguiPath = path.join(fixtureDir, "imgui.lua");
+  const diagnostics = [];
+
+  fs.writeFileSync(reaperPath, `
+---@param callback function
+function reaper.inspect(callback) end
+`);
+  fs.writeFileSync(imguiPath, "");
+
+  try {
+    generateExterns({
+      reaperPath,
+      imguiPath,
+      outputDir,
+      onDiagnostic: diagnostic => diagnostics.push(diagnostic)
+    });
+
+    assert.equal(diagnostics.length, 1);
+    assert.equal(diagnostics[0].type, "function");
+    assert.equal(diagnostics[0].context, "Reaper.inspect");
+    assert.equal(diagnostics[0].location, "parameter \"callback\"");
+    assert.match(diagnostics[0].message, /generated as Dynamic/);
+    assert.match(fs.readFileSync(path.join(outputDir, "Reaper.hx"), "utf8"), /callback: Dynamic/);
+  } finally {
+    fs.rmSync(fixtureDir, { recursive: true, force: true });
+  }
+});

@@ -33,9 +33,19 @@ function recordIdentifier(registry, generatedName, nativeName, context) {
   registry.set(generatedName, nativeName);
 }
 
+function recordTypeDiagnostic(diagnostics, type, context, location) {
+  const key = `${type}|${context}|${location}`;
+  if (!diagnostics.some(diagnostic => diagnostic.key === key)) {
+    diagnostics.push({ key, type, context, location });
+  }
+}
+
 function addFields(fields, types, functions, typedefs, options = {}) {
-  const { className, typeNames, skipDuplicate = false } = options;
+  const { className, typeNames, diagnostics, skipDuplicate = false } = options;
   const memberNames = new Map();
+  const reportUnknownType = (fieldName) => (type, location) => {
+    recordTypeDiagnostic(diagnostics, type, `${className}.${fieldName}`, location);
+  };
 
   traverseFields(fields || [], (field) => {
     if (field.fieldType === "function") {
@@ -46,12 +56,12 @@ function addFields(fields, types, functions, typedefs, options = {}) {
       recordIdentifier(memberNames, enhancedCamelCase(field.name), field.name, className);
       if (field.returns.length > 1) {
         recordIdentifier(typeNames, enhancedPascalCase(field.name) + "Returns", field.name, "Types");
-        typedefs.push(createMultiReturnsClass(field, types));
+        typedefs.push(createMultiReturnsClass(field, types, reportUnknownType(field.name)));
       }
-      functions.push(createHaxeFunction(field, types));
+      functions.push(createHaxeFunction(field, types, reportUnknownType(field.name)));
     } else if (field.fieldType === "variable") {
       recordIdentifier(memberNames, enhancedCamelCase(field.name), field.name, className);
-      functions.push(createHaxeVariable(field, types));
+      functions.push(createHaxeVariable(field, types, reportUnknownType(field.name)));
     }
   });
 }
@@ -68,6 +78,7 @@ export function generateExterns(options = {}) {
   const reaperTypes = [];
   const typedefs = [];
   const typeNames = new Map();
+  const diagnostics = [];
 
   for (const [key, value] of types) {
     if (key !== "reaper_array") {
@@ -77,16 +88,19 @@ export function generateExterns(options = {}) {
 
   addFields(reaperTree.gfx, types, gfxFunctions, typedefs, {
     className: "Graphics",
-    typeNames
+    typeNames,
+    diagnostics
   });
   addFields(reaperTree.reaper, types, reaperFunctions, typedefs, {
     className: "Reaper",
     typeNames,
+    diagnostics,
     skipDuplicate: true
   });
   addFields(imguiTree.ImGui, types, imguiFunctions, typedefs, {
     className: "ImGui",
-    typeNames
+    typeNames,
+    diagnostics
   });
 
   for (const [key, value] of types) {
@@ -112,6 +126,15 @@ export function generateExterns(options = {}) {
   fs.mkdirSync(settings.outputDir, { recursive: true });
   for (const [name, contents] of Object.entries(files)) {
     fs.writeFileSync(path.join(settings.outputDir, `${name}.hx`), contents, "utf8");
+  }
+
+  for (const diagnostic of diagnostics) {
+    const message = `Unknown type "${diagnostic.type}" in ${diagnostic.context} ${diagnostic.location}; generated as Dynamic.`;
+    if (settings.onDiagnostic) {
+      settings.onDiagnostic({ ...diagnostic, message });
+    } else {
+      console.warn(`Warning: ${message}`);
+    }
   }
 
   return files;

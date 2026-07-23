@@ -1,9 +1,9 @@
-export function determineType(allTypes = [], type, name) {
+export function determineType(allTypes = [], type, name, onUnknownType = null) {
   if (type.includes("|")) {
     const types = type.split("|").map(t => t.trim());
     const isNullable = types.includes("nil");
     const valueTypes = isNullable ? types.filter(t => t !== "nil") : types;
-    const convertedTypes = valueTypes.map(t => determineType(allTypes, t, name));
+    const convertedTypes = valueTypes.map(t => determineType(allTypes, t, name, onUnknownType));
 
     let result = convertedTypes[0];
     for (let i = 1; i < convertedTypes.length; i++) {
@@ -44,6 +44,13 @@ export function determineType(allTypes = [], type, name) {
         return "() -> Void";
       }
 
+      if (type === "any") {
+        return "Dynamic";
+      }
+
+      if (onUnknownType) {
+        onUnknownType(type);
+      }
       return "Dynamic";
   }
 }
