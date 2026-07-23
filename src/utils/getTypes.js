@@ -33,9 +33,11 @@ export function getTypes(ast) {
     }
 
     if (returns) {
-      const raw = normalizeType(returns.type);
-      if (!raw || commonTypesToExclude.includes(raw.toLowerCase())) return;
-      types.set(raw, raw);
+      for (const returnValue of returns) {
+        const raw = normalizeType(returnValue.type);
+        if (!raw || commonTypesToExclude.includes(raw.toLowerCase())) continue;
+        types.set(raw, raw);
+      }
     }
   })
 
